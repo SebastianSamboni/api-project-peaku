@@ -19,22 +19,6 @@ export const Product = sequelize.define('products', {
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    stock: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        validate: {
-            min: {
-                args: [0],
-                msg: "La cantidad de productos debe ser mayor o igual a cero!"
-            }
-        },
-        defaultValue: 0
-    },
-    is_available: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: false
-    },
     img_product: {
         type: DataTypes.STRING,
         allowNull: false
