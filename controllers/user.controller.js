@@ -4,7 +4,7 @@ import { createAccessToken } from '../libs/jwt.js'
 import { Purchase } from '../models/purchase.model.js'
 
 export const register = async (req, res) => {
-    const { name, last_name, email, password, cellphone } = req.body
+    const { name, last_name, email, password, phone } = req.body
     try {
         if (!password || password.length < 8 || password.length > 20) {
             return res.status(400).json({
@@ -25,9 +25,12 @@ export const register = async (req, res) => {
             last_name,
             email,
             password: pwdHash,
-            cellphone
+            phone
         })
-        res.status(200).json(newUser)
+        res.status(200).json({
+            "name":newUser.email,
+            "message":"Usuario creado con exito"
+        })
     } catch (error) {
         if (error.name === 'SequelizeValidationError') {
             let errors = []
@@ -56,10 +59,12 @@ export const login = async (req, res) => {
         if(!isMatch) res.status(400).json({message: 'Contraseña Incorrecta'})
 
         const token = await createAccessToken(user)
-        res.cookie('token', token)
+        res.header('authorization', `Bearer ${token}`)
         res.status(200).json({
-            user,
-            message: 'Login successfully'
+            name: user.name,
+            id: user.id,
+            email: user.email,
+            message: 'Sesion iniciada'
         })
     } catch (error) {
         res.status(500).json({message: error.message})
@@ -77,7 +82,7 @@ export const getProfile = async (req, res) => {
         const user = await User.findByPk(id, {
             attributes: { exclude: ['password']}
         })
-        if (!user) return res.status(400).json({ message: 'User not found' })
+        if (!user) return res.status(400).json({ message: 'Usuario no encontrado' })
         
         return res.status(200).json(user)
     } catch (error) {
