@@ -1,6 +1,8 @@
 import app from './app.js'
 import { sequelize } from './database/database.js'
 import { data } from './config.js'
+// import { createCategory } from './controllers/category.controller.js'
+// import { createSubcategory } from './controllers/subcategory.controller.js'
 
 // import './models/user.model.js'
 // import './models/purchase.model.js'
@@ -13,8 +15,10 @@ const port = data.port
 
 const main = async () => {
     try {
-        await sequelize.sync({force: false})
+        await sequelize.sync({ force: false})
         app.listen(port)
+        // createCategory()
+        // createSubcategory()
         console.log(`Server is running on http://localhost:${port}`)
     } catch (error) {
         console.log(`Unable to connect to the database: ${error}`)

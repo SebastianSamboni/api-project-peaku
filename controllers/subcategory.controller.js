@@ -2,22 +2,54 @@ import { SubCategory } from '../models/subcategory.model.js'
 import { Product } from '../models/product.model.js'
 
 export const createSubcategory = async (req, res) => {
-    const { role_id } = req.user
-    const { name, category_id } = req.body
-    try {
-        if (role_id === 1) {
-            const newSubcategory = await SubCategory.create({
-                name,
-                category_id
-            })
-            res.sendStatus(200)
+    const one = SubCategory.create(
+        {
+            name: 'Alimentos',
+            category_id: 1
         }
-        else {
-            return res.status(400).json(`You don't have the permissions to do this!`)
+    )
+    const two = SubCategory.create(
+        {
+            name: 'Snacks',
+            category_id: 1
         }
-    } catch (error) {
-        res.status(500).json({message: error.message})
-    }
+    )
+    const three = SubCategory.create(
+        {
+            name: 'Accesorios',
+            category_id: 1
+        }
+    )
+    const four = SubCategory.create(
+        {
+            name: 'Alimentos',
+            category_id: 2
+        }
+    )
+    const five = SubCategory.create(
+        {
+            name: 'Arenas',
+            category_id: 2
+        }
+    )
+    const six = SubCategory.create(
+        {
+            name: 'Accesorios',
+            category_id: 2
+        }
+    )
+    const seven = SubCategory.create(
+        {
+            name: 'Alimentos',
+            category_id: 3
+        }
+    )
+    const eight = SubCategory.create(
+        {
+            name: 'Accesorios peceras',
+            category_id: 3
+        }
+    )
 }
 
 export const getSubcategories = async (req, res) => {

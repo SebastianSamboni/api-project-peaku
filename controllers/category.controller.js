@@ -2,20 +2,14 @@ import { Category } from '../models/category.model.js'
 import { Product } from '../models/product.model.js'
 import { SubCategory } from '../models/subcategory.model.js'
 
-export const createCategory = async (req, res) => {
-    const { role_id } = req.user
-    const { name } = req.body
-    try {
-        if (role_id === 1) {
-            const newCategory = Category.create({name})
-            res.json({category: newCategory})
-        }
-        else {
-            return res.status(400).json(`You don't have the permissions to do this!`)
-        }
-    } catch (error) {
-        res.status(500).json({message: error.message})
-    }
+export const createCategory = async () => {
+    const categoriesCreated = Category.findOne({ where: { name: 'Caninos' } })
+    if (categoriesCreated) console.log('Categories already created')
+    const categoryOne = Category.create({ name: 'Caninos' })
+    const categoryTwo = Category.create({ name: 'Felinos' })
+    const categoryThree = Category.create({ name: 'Peces' })
+    
+    console.log(categoryOne, categoryTwo, categoryThree)
 }
 
 export const getCategories = async (req, res) => {

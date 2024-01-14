@@ -1,19 +1,16 @@
 import { Product } from '../models/product.model.js'
 
 export const createProduct = async (req, res) => {
-    const { role_id } = req.user
     const { name, price, stock, img_product, subcategory_id } = req.body
     try {
-        if (role_id === 1) {
-            const newProduct = await Product.create({
-                name,
-                price,
-                stock,
-                img_product,
-                subcategory_id
-            })
-            res.sendStatus(200)
-        }
+        const newProduct = await Product.create({
+            name,
+            price,
+            stock,
+            img_product,
+            subcategory_id
+        })
+        res.sendStatus(200)
     } catch (error) {
         res.status(500).json({message: error.message})
     }

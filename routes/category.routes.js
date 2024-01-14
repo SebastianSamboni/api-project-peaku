@@ -6,7 +6,8 @@ import {
     getCategories,
     getCategoryById,
     getSubcategories,
-    updateCategory
+    updateCategory,
+    getProducts
 } from '../controllers/category.controller.js'
 
 const router = Router()
@@ -17,6 +18,6 @@ router.get('/:id', getCategoryById)
 router.put('/update/:id', authRequired, updateCategory)
 router.delete('/delete', authRequired, deleteCategory)
 router.get('/:id/subcategories', getSubcategories)
-routet.get('/:id/products', getProducts)
+router.get('/:id/products', getProducts)
 
 export default router
