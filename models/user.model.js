@@ -12,13 +12,9 @@ export const User = sequelize.define('users', {
         type: DataTypes.TEXT,
         allowNull: false,
         validate: {
-            isAlpha: {
-                args: true,
-                msg: 'El nombre solo puede contener letras.'
-            },
             notEmpty: {
                 args: true,
-                msg: 'Este campo es obligatorio.'
+                msg: 'El nombre es obligatorio.'
             }
         }
     },
@@ -26,13 +22,9 @@ export const User = sequelize.define('users', {
         type: DataTypes.TEXT,
         allowNull: false,
         validate: {
-            isAlpha: {
-                args: true,
-                msg: 'El apellido solo puede contener letras.'
-            },
             notEmpty: {
                 args: true,
-                msg: 'Este campo es obligatorio.'
+                msg: 'El apellido es obligatorio.'
             }
         }
     },
@@ -47,7 +39,7 @@ export const User = sequelize.define('users', {
             },
             notEmpty: {
                 args: true,
-                msg: 'Este campo es obligatorio.'
+                msg: 'El email es obligatorio.'
             },
             isUnique: async (email) => {
                 const emailExists = await User.findOne({
@@ -65,7 +57,7 @@ export const User = sequelize.define('users', {
         validate: {
             notEmpty: {
                 args: true,
-                msg: 'Este campo es obligatorio.'
+                msg: 'La contraseña es obligatoria.'
             }
         }
     },

@@ -31,15 +31,9 @@ export const register = async (req, res) => {
     } catch (error) {
         if (error.name === 'SequelizeValidationError') {
             let errors = []
-            
-            if (error.name === 'SequelizeUniqueConstraintError') {
-                errors.push({message: error.original.detail})
-            }
-            else {
-                errors = error.errors.map(err => ({
-                    message: err.message
-                }));
-            }
+            errors = error.errors.map(err => ({
+                message: err.message
+            }))
 
             return res.status(400).json({ error: 'Error de validación', errors })
         } 
@@ -62,6 +56,7 @@ export const login = async (req, res) => {
             message: 'Login successfully'
         })
     } catch (error) {
+        console.log(error)
         res.status(500).json({message: error.message})
     }
 }
@@ -121,4 +116,24 @@ export const deleteAccount = async (req, res) => {
     } catch (error) {
         res.status(500).json({message: error.message})
     }
+}
+
+export const verifyToken = async (req, res) => {
+    const { token } = req.cookies
+    if (!token) return res.status(401).json({ message: 'Unauthorized ' })
+    
+    jwt.verify(token, TOKEN_SECRET, async (err, user) => {
+        if (err) return res.status(401).json({ message: 'Unauthorized' })
+        
+        const userFound = await User.findByPk({where: user.id})
+        if (!userFound) return res.status(404).json({ message: 'No found' })
+        
+        return res.json({
+            id: userFound.id,
+            name: userFound.name,
+            last_name: userFound.last_name,
+            email: userFound.email,
+            cellphone: userFound.cellphone
+        })
+    })
 }

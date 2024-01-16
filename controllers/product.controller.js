@@ -55,6 +55,10 @@ export const getProductsByState = async (req, res) => {
     }
 }
 
+export const getProductsByParameter = async (req, res) => {
+    
+}
+
 export const updateState = async (req, res) => {
     const { code } = req.params
     try {
