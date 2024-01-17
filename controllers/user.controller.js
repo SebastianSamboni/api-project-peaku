@@ -50,7 +50,11 @@ export const login = async (req, res) => {
         if(!isMatch) res.status(400).json({message: 'Contraseña Incorrecta'})
 
         const token = await createAccessToken(user)
-        res.cookie('token', token)
+        res.cookie('token', token, {
+            sameSite: 'none',
+            secure: 'true',
+            httpOnly: 'false'
+        })
         res.status(200).json({
             user,
             message: 'Login successfully'

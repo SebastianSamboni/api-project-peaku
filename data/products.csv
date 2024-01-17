@@ -1,0 +1,11 @@
+name,description,price,img_product,subcategory_id
+Chunky para gatos,Alimento chunky para gatos 500gr,50000,../uploads/cat-chunky.png,4
+Hills para gatos,Alimento Hills Science Diet Adult 1-6,50000,../uploads/cat-hills.jpg,4
+Bolso para gato,Bolso transparente para transportar gatos,150000,../uploads/cataccesory-bag.jpg,6
+Cama para gatos,Cama para gatos color beige en forma de sillón,120000,../uploads/cataccesory-bed.jpg,6
+Arena para gatos Cat Litter,Arena para gatos marca Cat litter,80000,../uploads/catsand-catlitter.jpg,5
+Chunky para perros,Alimento marca Chunky para perros,50000,../uploads/dog-chunky.jpg,1
+Snack Chunky,Snack Chunky para perros sabor pollo,10000,../uploads/dogsnack-chunky.jpg,2
+Cepillo para perro,Cepillo para perros color verde cerdado,15000,../uploads/dogaccesory-brush.jpg,3
+Goldfish,Comida para peces,20000,../uploads/fish-goldfish.jpg,7
+Coral,Coral color beige para decorar peceras,30000,../uploads/fishaccesory-coral.jpg,8

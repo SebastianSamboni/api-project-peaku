@@ -1,16 +1,21 @@
+import { Op } from 'sequelize'
 import { Product } from '../models/product.model.js'
+import path from 'path'
+import fs from 'fs/promises'
+
+const __dirname = path.resolve()
 
 export const createProduct = async (req, res) => {
-    const { name, price, stock, img_product, subcategory_id } = req.body
     try {
-        const newProduct = await Product.create({
-            name,
-            price,
-            stock,
-            img_product,
-            subcategory_id
-        })
-        res.sendStatus(200)
+        const filePath = path.join(__dirname, './data/products.csv')
+        const csvData = await fs.readFile(filePath, 'utf-8')
+        const lines = csvData.split('\n')
+        lines.shift()
+
+        for (const line of lines) {
+            const [name, description, price, img_product, subcategory_id] = line.trim().split(',')
+            await Product.create({name, description, price, img_product, subcategory_id})
+        }
     } catch (error) {
         res.status(500).json({message: error.message})
     }
@@ -26,9 +31,9 @@ export const getProducts = async (req, res) => {
 }
 
 export const getProductByCode = async (req, res) => {
-    const { code } = req.params
+    const { id } = req.params
     try {
-        const product = await Product.findByPk(code)
+        const product = await Product.findByPk(id)
         res.json(product)
     } catch (error) {
         res.status(500).json({message: error.message})
@@ -36,7 +41,7 @@ export const getProductByCode = async (req, res) => {
 }
 
 export const getProductsByPrice = async (req, res) => {
-    const { price } = req.body
+    const { price } = req.params
     try {
         const products = await Product.findAll({ where: { price } })
         res.json(products)
@@ -45,57 +50,20 @@ export const getProductsByPrice = async (req, res) => {
     }
 }
 
-export const getProductsByState = async (req, res) => {
-    const { is_available } = req.body
-    try { 
-        const products = await Product.findAll({ where: { is_available } })
-        res.json(products)
-    } catch (error) {
-        res.status(500).json({message: error.message})
-    }
-}
-
 export const getProductsByParameter = async (req, res) => {
-    
-}
-
-export const updateState = async (req, res) => {
-    const { code } = req.params
+    const { search_parameter } = req.query
+    console.log('Valor de search_parameter', search_parameter)
     try {
-        const product = await Product.findByPk(code)
-        if (product.stock === 0) {
-            product.update(false, {where: {is_available}})
-        }
-        else {
-            product.update(true, {where: {is_available}})
-        }
-    } catch (error) {
-        res.status(500).json({message: error.message})
-    }
-}
-
-export const updateProduct = async (req, res) => {
-    const { role_id } = req.user
-    const { code } = req.params
-    const params = req.body
-    try {
-        if (role_id === 1) {
-            const product = await Product.update(params, { where: { code } })
-            res.json(product)
-        }
-    } catch (error) {
-        res.status(500).json({message: error.message})
-    }
-}
-
-export const deleteProduct = async (req, res) => {
-    const { code } = req.params
-    const { role_id } = req.user
-    try {
-        if (role_id === 1) {
-            await Product.destroy({ where: { code } })
-            res.sendStatus(204)
-        }
+        const products = await Product.findAll({
+            where: {
+                [Op.or]: [
+                    { name: { [Op.like]: `%${search_parameter}%` } }
+                ]
+            }
+        })
+        if (!products || products.length === 0) return res.status(401).json({ message: `No se encuentran productos con la siguiente búsqueda: ${search_parameter}` })
+        
+        return res.status(200).json({products})
     } catch (error) {
         res.status(500).json({message: error.message})
     }
