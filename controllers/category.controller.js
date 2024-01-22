@@ -1,20 +1,27 @@
 import { Category } from '../models/category.model.js'
 import { Product } from '../models/product.model.js'
 import { SubCategory } from '../models/subcategory.model.js'
+import path from 'path'
+import fs from 'fs/promises'
 
-export const createCategory = async (req, res) => {
-    const { role_id } = req.user
-    const { name } = req.body
+const __dirname = path.resolve()
+
+export const createCategory = async () => {
     try {
-        if (role_id === 1) {
-            const newCategory = Category.create({name})
-            res.json({category: newCategory})
+        const filePath = path.join(__dirname, './data/categories.csv')
+        const csvData = await fs.readFile(filePath, 'utf-8')
+        const lines = csvData.split('\n')
+
+        lines.shift()
+    
+        for (const line of lines) {
+            const name = line.trim()
+            await Category.create({name})
         }
-        else {
-            return res.status(400).json(`You don't have the permissions to do this!`)
-        }
+
+        console.log('Categorias creadas!')
     } catch (error) {
-        res.status(500).json({message: error.message})
+        console.error('Error al crear categorias: ', error)
     }
 }
 
@@ -37,39 +44,6 @@ export const getCategoryById = async (req, res) => {
     }
 }
 
-export const updateCategory = async (req, res) => {
-    const { id } = req.params
-    const { name } = req.body
-    const { role_id } = req.user
-    try {
-        if (role_id === 1) {
-            const category = await Category.update(name, { where: { id } })
-            res.json(category)
-        }
-        else {
-            res.status(400).json('The category does not exist')
-        }
-    } catch (error) {
-        res.status(500).json({message: error.message})
-    }
-}
-
-export const deleteCategory = async (req, res) => {
-    const { id } = req.params
-    const { role_id } = req.user
-    try {
-        if (role_id === 1) {
-            await Category.destroy({ where: { id } })
-            res.sendStatus(204)
-        }
-        else {
-            res.status(400).json('The category does not exist')
-        }
-    } catch (error) {
-        res.status(500).json({message: error.message})
-    }
-}
-
 export const getSubcategories = async (req, res) => {
     const { id } = req.params
     try {
@@ -87,12 +61,12 @@ export const getProducts = async (req, res) => {
 
     try {
         const subcategories = await SubCategory.findAll({
-            where: { id },
+            where: { category_id: id },
             include: [{model: Product}]
         })
 
-        const products = subcategories.flatMap(subCategory => subCategory.Product)
-        res.json(products)
+        const products = subcategories.map(subCategory => subCategory.products)
+        res.status(200).json({products})
     } catch (error) {
         res.status(500).send('Error en el servidor')
     }

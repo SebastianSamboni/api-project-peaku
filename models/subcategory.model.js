@@ -23,5 +23,5 @@ SubCategory.hasMany(Product, {
 
 Product.belongsTo(SubCategory, {
     foreignKey: 'subcategory_id',
-    target: 'code'
+    target: 'id'
 })

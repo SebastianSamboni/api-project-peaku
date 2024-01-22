@@ -1,23 +1,24 @@
 import { SubCategory } from '../models/subcategory.model.js'
 import { Product } from '../models/product.model.js'
+import path from 'path'
+import fs from 'fs/promises'
+
+const __dirname = path.resolve()
 
 export const createSubcategory = async (req, res) => {
-    const { role_id } = req.user
-    const { name, category_id } = req.body
     try {
-        if (role_id === 1) {
-            const newSubcategory = await SubCategory.create({
-                name,
-                category_id
-            })
-            res.sendStatus(200)
-        }
-        else {
-            return res.status(400).json(`You don't have the permissions to do this!`)
+        const filePath = path.join(__dirname, './data/subcategories.csv')
+        const csvData = await fs.readFile(filePath, 'utf-8')
+        const lines = csvData.split('\n')
+        lines.shift()
+
+        for (const line of lines) {
+            const [name, category_id] = line.trim().split(',')
+            await SubCategory.create({ name, category_id })
         }
     } catch (error) {
         res.status(500).json({message: error.message})
-    }
+    }  
 }
 
 export const getSubcategories = async (req, res) => {
@@ -34,33 +35,6 @@ export const getSubcategoryById = async (req, res) => {
     try {
         const subcategory = await SubCategory.findByPk(id)
         res.json(subcategory)
-    } catch (error) {
-        res.status(500).json({message: error.message})
-    }
-}
-
-export const updateSubcategory = async (req, res) => {
-    const { role_id } = req.user
-    const { id } = req.params
-    const params = req.body
-    try {
-        if (role_id === 1) {
-            const subcategory = await SubCategory.update(params, { where: { id } })
-            res.json(subcategory)
-        }
-    } catch (error) {
-        res.status(500).json({message: error.message})
-    }
-}
-
-export const deleteSubcategory = async (req, res) => {
-    const { id } = req.params
-    const { role_id } = req.user
-    try {
-        if (role_id === 1) {
-            await SubCategory.destroy({ where: { id } })
-            res.sendStatus(204)
-        }
     } catch (error) {
         res.status(500).json({message: error.message})
     }

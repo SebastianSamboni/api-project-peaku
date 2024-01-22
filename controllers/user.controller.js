@@ -2,6 +2,8 @@ import { User } from '../models/user.model.js'
 import bcrypt from 'bcryptjs'
 import { createAccessToken } from '../libs/jwt.js'
 import { Purchase } from '../models/purchase.model.js'
+import jwt from 'jsonwebtoken'
+import { data } from '../config.js'
 
 export const register = async (req, res) => {
     const { name, last_name, email, password, cellphone } = req.body
@@ -31,15 +33,9 @@ export const register = async (req, res) => {
     } catch (error) {
         if (error.name === 'SequelizeValidationError') {
             let errors = []
-            
-            if (error.name === 'SequelizeUniqueConstraintError') {
-                errors.push({message: error.original.detail})
-            }
-            else {
-                errors = error.errors.map(err => ({
-                    message: err.message
-                }));
-            }
+            errors = error.errors.map(err => ({
+                message: err.message
+            }))
 
             return res.status(400).json({ error: 'Error de validación', errors })
         } 
@@ -56,19 +52,16 @@ export const login = async (req, res) => {
         if(!isMatch) res.status(400).json({message: 'Contraseña Incorrecta'})
 
         const token = await createAccessToken(user)
-        res.cookie('token', token)
+        res.setHeader('Authorization', token)
         res.status(200).json({
             user,
-            message: 'Login successfully'
+            message: 'Login successfully',
+            token
         })
     } catch (error) {
+        console.log(error)
         res.status(500).json({message: error.message})
     }
-}
-
-export const logout = async (req, res) => {
-    res.cookie('token', '', { expires: new Date(0) })
-    return res.sendStatus(200)
 }
 
 export const getProfile = async (req, res) => {
@@ -95,30 +88,28 @@ export const getMyPurchases = async (req, res) => {
     }
 }
 
-export const updateProfile = async (req, res) => {
-    const { id } = req.user
-    const params = req.body
-
-    if (params.password) {
-        const pwd = await bcrypt.hash(password, 10)
-        params.password = pwd
+export const verifyToken = async (req, res) => {
+    const token = req.headers.authorization
+    if (!token) {
+        console.log('Alert 1')
+        return res.status(401).json({ message: 'Unauthorized ' })
     }
-
-    try {
-        const user = await User.update(params, {where: {id}})
-        res.json(user)
-    } catch (error) {
-        res.status(500).json({message: error.message})
-    }
-}
-
-export const deleteAccount = async (req, res) => {
-    const { id } = req.user
-
-    try {
-        await User.destroy({ where: { id } })
-        res.sendStatus(204)
-    } catch (error) {
-        res.status(500).json({message: error.message})
-    }
+    
+    jwt.verify(token, data.jwtToken, async (err, user) => {
+        if (err) {
+            console.log('Alert 3: ', err)
+            return res.status(401).json({ message: 'Unauthorized' })
+        }
+        
+        const userFound = await User.findOne({where: {id: user.id}})
+        if (!userFound) return res.status(404).json({ message: 'No found' })
+        
+        return res.json({
+            id: userFound.id,
+            name: userFound.name,
+            last_name: userFound.last_name,
+            email: userFound.email,
+            token
+        })
+    })
 }

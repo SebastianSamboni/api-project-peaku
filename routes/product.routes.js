@@ -1,16 +1,18 @@
 import { Router } from 'express'
-import { authRequired } from '../middlewares/checkToken.js'
-import { createProduct, getProducts, getProductByCode, getProductsByPrice, getProductsByState, updateState, updateProduct, deleteProduct } from '../controllers/product.controller.js'
+import {
+    createProduct,
+    getProducts,
+    getProductByCode,
+    getProductsByPrice,
+    getProductsByParameter
+} from '../controllers/product.controller.js'
 
 const router = Router()
 
-router.post('/create', authRequired, createProduct)
-router.get('/', getProducts)
-router.get('/:code', getProductByCode)
-router.get('/price', getProductsByPrice)
-router.get('/state', getProductsByState)
-router.put('/state/:code', updateState)
-router.put('/update/:code', authRequired, updateProduct)
-router.delete('/delete/:code', authRequired, deleteProduct)
+router.post('/create', createProduct)
+router.get('/get', getProducts)
+router.get('/code/:id', getProductByCode)
+router.get('/price/:price', getProductsByPrice)
+router.get('/get-search', getProductsByParameter)
 
 export default router

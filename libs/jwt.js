@@ -1,5 +1,4 @@
 import jwt from 'jsonwebtoken'
-import moment from 'moment'
 import { data } from '../config.js'
 
 const pwdToken = data.jwtToken
@@ -20,7 +19,9 @@ export const createAccessToken = (user) => {
                 expiresIn: '1d' 
             },
             (error, token) => { 
-                if (error) reject(error)
+                if (error) {
+                    reject(error)
+                }
                 resolve(token)
             }
         )  
