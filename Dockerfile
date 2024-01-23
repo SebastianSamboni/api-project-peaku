@@ -1,23 +1,20 @@
-# Development stage
-FROM node:18 as development
-WORKDIR /usr/src/app
-COPY package*.json tsconfig.json ./
+# Utiliza la imagen oficial de Node.js como base
+FROM node:18
+
+# Establece el directorio de trabajo dentro del contenedor
+WORKDIR /usr/app
+
+# Copia los archivos de tu aplicación al contenedor
+COPY package*.json ./
+
+# Instala las dependencias
 RUN npm install
-COPY ./src ./src
-CMD [ "npm", "run", "dev" ]
 
-# Builder stage
-FROM development as builder
-WORKDIR /usr/src/app
-# Build the app with devDependencies still installed from "development" stage
-RUN npm run build
-# Clear dependencies and reinstall for production (no devDependencies)
-RUN rm -rf node_modules
-RUN npm ci --only=production
+# Copia el resto de los archivos de la aplicación
+COPY . .
 
-# Production stage
-FROM alpine:latest as production
-RUN apk --no-cache add nodejs ca-certificates
-WORKDIR /root/
-COPY --from=builder /usr/src/app ./
-CMD [ "node", "./build/index.js" ]
+# Expone el puerto en el que tu aplicación Node.js escucha
+EXPOSE 8080
+
+# Comando para ejecutar tu aplicación en Google Cloud Run
+CMD ["npm", "dev"]
