@@ -5,5 +5,12 @@ const db = data.db
 
 export const sequelize = new Sequelize(db.database, db.user, db.password, {
     host: db.host,
-    dialect: 'postgres'
+    dialect: 'postgres',
+    ssl: true, 
+    dialectOptions: {
+        ssl: {
+            require: true,
+            rejectUnauthorized: false 
+        }
+  }
 })
