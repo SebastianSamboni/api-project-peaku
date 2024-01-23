@@ -1,0 +1,28 @@
+// DATA USERS
+{
+    "name": "Sebastian",
+    "last_name": "Samboni",
+    "email": "sebas_18_08@hotmail.com",
+    "password": "testingKey",
+    "cellphone": 3113038408,
+    "role_id": 1
+}
+
+{
+    "name": "Andrea",
+    "last_name": "Navarro",
+    "email": "juanita18_15@hotmail.com",
+    "password": "testingKey",
+    "cellphone": 3042252660,
+    "role_id": 2
+}
+
+// DATA CATEGORIES
+
+// DATA SUBCATEGORIES
+
+// DATA PRODUCTS
+
+// DATA PURCHASE CAR
+
+// DATA PURCHASE
