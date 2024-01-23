@@ -3,7 +3,7 @@ import { config } from 'dotenv'
 config()
 
 export const data = {
-    port: process.env.SERVER_PORT,
+    port: process.env.PORT,
     db: {
         user: process.env.DB_USER,
         password: process.env.DB_PASSWORD,
