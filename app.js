@@ -15,9 +15,37 @@ app.use(morgan('dev'))
 app.use(express.json())
 app.use(cookieParser())
 
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'testing.react18@gmail.com',
+        pass: 'vkyj bxpe ooeg xlwm'
+    }
+})
+
 app.use('/api/users', userRoutes)
 app.use('/api/categories', categoryRoutes)
 app.use('/api/subcategories', subCategoriesRoutes)
 app.use('/api/products', productsRoutes)
+
+app.post('/api/email', (req, res) => {
+    const { email } = req.body
+    console.log('Body request: ', req.body)
+
+    const mailOptions = {
+        from: 'testing.react18@gmail.com',
+        to: email,
+        subject: 'Solicitud de suscripción',
+        text: '¡Hola! Has solicitado suscribirte.'
+    }
+
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            return res.status(500).json('El error está aqui: ${error}')
+        }
+        console.log(info)
+        res.status(200).json('Correo enviado: ${info.response}')
+    })
+})
 
 export default app
