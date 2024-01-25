@@ -1,7 +1,8 @@
-import express from 'express'
-import morgan from 'morgan'
-import cookieParser from 'cookie-parser'
-import cors from 'cors'
+import express from 'express';
+import morgan from 'morgan';
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import nodemail from 'nodemail';
 
 import userRoutes from './routes/user.routes.js'
 import categoryRoutes from './routes/category.routes.js'
